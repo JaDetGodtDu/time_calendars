@@ -9,11 +9,10 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
-
-
-
-
-
+let visitorCount = 0;
+app.get("/visitorcount", (req, res) => {
+    res.send({data: ++visitorCount});
+});
 
 
 app.listen(PORT, () => {
