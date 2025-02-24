@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendars</title>
+    <style>
+        body { font-family: Arial, sans-serif;
+            text-align: center; 
+            padding: 20px;
+            color: white;
+            z-index: 1;
+            }
+        
+        #clock { font-size: 24px; 
+                margin: 10px; 
+               }
+        .background { z-index: 0;
+	            background: #000 url('https://i.imgur.com/YKY28eT.png') repeat top center;
+                position:absolute;
+	            display:block;
+	            top:0; bottom:0;
+	            left:0; right:0;
+	            width:100%; height:100%;
+                }
+            
+
+    </style>
+</head>
+<body>
+    <div class="background">
+    <h1>Multi-Calendar Time</h1>
+        <h2>Your time:</h2>
+        <p id="clock"></p>
+        <h2>Todays date in different calendars:</h2>
+        <p><b>Gregorian: </b> <span id="gregorian"></span></p>
+        <p><b>Islamic: </b><span id="islamic"></span></p>
+        <p><b>Chinese: </b><span id="chinese"></span></p>
+        
+        <br>
+        <h2>See your birthdate in different calendars</h2>
+        <input type="date" id="birthdate">
+        <button onclick="convertBirthdate()">Convert</button>
+        <p id="birthdateResult"></p>
+    </div>
+    <script>
+        function updateClock() {
+            const currentDate = new Date();
+
+            document.getElementById("clock").textContent = currentDate.toLocaleTimeString();
+            
+            document.getElementById("gregorian").textContent = currentDate.toDateString();
+           
+            document.getElementById("chinese").textContent = new Intl.DateTimeFormat('zh-Hans-CN-u-ca-chinese', { dateStyle: 'full' }).format(currentDate);
+
+            document.getElementById("islamic").textContent = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', { dateStyle: 'full' }).format(currentDate);
+        }
+        function convertBirthdate() {
+            const inputDate = new Date(document.getElementById("birthdate").value);
+            if (isNaN(inputDate)) {
+                document.getElementById("birthdateResult").textContent = "Invalid date!";
+                return;
+            }
+            const islamicBirth = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', { dateStyle: 'full' }).format(inputDate);
+            const chineseBirth = new Intl.DateTimeFormat('zh-CN-u-ca-chinese', { dateStyle: 'full' }).format(inputDate);
+            document.getElementById("birthdateResult").innerHTML = 
+                `<strong>Islamic:</strong> ${islamicBirth}<br><strong>Chinese:</strong> ${chineseBirth}`;
+        }
+
+        setInterval(updateClock, 1000)
+        updateClock();
+    </script>
+</body>
+</html>
