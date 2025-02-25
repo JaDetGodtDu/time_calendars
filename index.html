@@ -46,9 +46,13 @@
             <h2>Your time:</h2>
             <p id="clock"></p>
             <h2>Todays date in different calendars:</h2>
-            <p><b>Gregorian: </b> <span id="gregorian"></span></p>
+            <p><b>Gregorian: </b><span id="gregorian"></span></p>
+            <p><b>Julian: </b><span id="julian"></span></p>
+            <p><b>Hebrew: </b><span id="hebrew"></span></p>
+			<p><b>Persian: </b><span id="persian"></span></p>
             <p><b>Islamic: </b><span id="islamic"></span></p>
             <p><b>Chinese: </b><span id="chinese"></span></p>
+			<p><b>Japanese: </b><span id="japanese"></span></p>
         
             <br>
             <h2>See your birthdate in different calendars</h2>
@@ -62,23 +66,61 @@
             const currentDate = new Date();
 
             document.getElementById("clock").textContent = currentDate.toLocaleTimeString();
-            
+        }
+
+        function renderCalendars(){
+            const currentDate = new Date();
+
+            let julianDate = new Date(currentDate);
+			julianDate.setDate(julianDate.getDate() - 13); // Would need to be changed around year 2099 ! or using an api or a library
+
+			let hebrewFullYear= new Intl.DateTimeFormat('he-IL-u-ca-hebrew', { dateStyle: 'full', timeStyle: 'short' }).format(currentDate);
+			hebrewFullYear = hebrewFullYear.split(',')[0]; // I had to split the string as to not get the timestamp
+
             document.getElementById("gregorian").textContent = currentDate.toDateString();
            
-            document.getElementById("chinese").textContent = new Intl.DateTimeFormat('zh-Hans-CN-u-ca-chinese', { dateStyle: 'full' }).format(currentDate);
+            document.getElementById("julian").textContent = julianDate.toDateString();
 
-            document.getElementById("islamic").textContent = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', { dateStyle: 'full' }).format(currentDate);
+            document.getElementById("hebrew").textContent = new Intl.DateTimeFormat('en-u-ca-hebrew', { dateStyle: 'full' }).format(currentDate) + 
+															" | " + 
+															hebrewFullYear;
+
+			document.getElementById("persian").textContent = new Intl.DateTimeFormat('en-u-ca-persian', { dateStyle: 'full' }).format(currentDate) + 
+															" | " + 
+															new Intl.DateTimeFormat('fa-IR-u-ca-persian', { dateStyle: 'full' }).format(currentDate);
+
+            document.getElementById("islamic").textContent = new Intl.DateTimeFormat('en-u-ca-islamic', { dateStyle: 'full' }).format(currentDate) + 
+															 " | " + 
+															 new Intl.DateTimeFormat('ar-TN-u-ca-islamic', { dateStyle: 'full' }).format(currentDate);
+            
+			document.getElementById("chinese").textContent = new Intl.DateTimeFormat('en-u-ca-chinese', { dateStyle: 'full' }).format(currentDate) + 
+															" | " + 
+															new Intl.DateTimeFormat('zh-CN-u-ca-chinese', { dateStyle: 'full' }).format(currentDate);
+
+			document.getElementById("japanese").textContent = new Intl.DateTimeFormat('en-u-ca-japanese', { dateStyle: 'full' }).format(currentDate) + 
+															" | " + 
+															new Intl.DateTimeFormat('ja-JP-u-ca-japanese', { dateStyle: 'full' }).format(currentDate);
         }
 
         function convertBirthdate() {
             const inputDate = new Date(document.getElementById("birthdate").value);
            
-            const islamicBirth = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', { dateStyle: 'full' }).format(inputDate);
-            const chineseBirth = new Intl.DateTimeFormat('zh-CN-u-ca-chinese', { dateStyle: 'full' }).format(inputDate);
+			const hebrewBirth = new Intl.DateTimeFormat('en-u-ca-hebrew', { dateStyle: 'full' }).format(inputDate);
+			const persianBirth = new Intl.DateTimeFormat('en-u-ca-persian', { dateStyle: 'full' }).format(inputDate);
+            const islamicBirth = new Intl.DateTimeFormat('en-u-ca-islamic', { dateStyle: 'full' }).format(inputDate);
+            const chineseBirth = new Intl.DateTimeFormat('en-u-ca-chinese', { dateStyle: 'full' }).format(inputDate);
+			const japaneseBirth = new Intl.DateTimeFormat('en-u-ca-japanese', { dateStyle: 'full' }).format(inputDate);
+
             document.getElementById("birthdateResult").innerHTML = 
-                `<b>Islamic:</b> ${islamicBirth}
+                `<b>Hebrew:</b> ${hebrewBirth}
+				 <br>
+				 <b>Persian:</b> ${persianBirth}
+				 <br>
+				 <b>Islamic:</b> ${islamicBirth}
                  <br>
-                 <b>Chinese:</b> ${chineseBirth}`;
+                 <b>Chinese:</b> ${chineseBirth}
+				 <br>
+				 <b>Japanese:</b> ${japaneseBirth}`;
         }
 
         fetch("/visitorcount")
@@ -87,6 +129,8 @@
             const visitorCounter = document.getElementById("counter");
             visitorCounter.textContent = result.data;
         });
+
+        renderCalendars();
 
         setInterval(updateClock, 1000)
         updateClock();
